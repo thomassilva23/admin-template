@@ -5,7 +5,9 @@ interface ConteudoProps {
 export default function Conteudo(props: ConteudoProps) {
   return (
     <div>
-      <div className={`flex flex-col mt-7`}>{props.children}</div>
+      <div className={`flex flex-col mt-7 dark:text-gray-200`}>
+        {props.children}
+      </div>
     </div>
   );
 }
