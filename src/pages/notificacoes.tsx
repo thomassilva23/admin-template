@@ -7,7 +7,7 @@ export default function Notificacoes() {
         titulo="Notificações"
         subtitulo="Aqui você irá gerenciar suas notificações"
       >
-        <h3>Conteúdo</h3>
+        <h1>Notificações</h1>
       </Layout>
     </div>
   );
