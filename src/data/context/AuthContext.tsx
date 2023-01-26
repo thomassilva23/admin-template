@@ -10,7 +10,7 @@ interface AuthContextProps {
 
 const AuthContext = createContext<AuthContextProps>({});
 
-/* async function usuarioNormalizado(
+async function usuarioNormalizado(
   usuarioFirebase: firebase.User
 ): Promise<Usuario> {
   const token = await usuarioFirebase.getIdToken();
@@ -20,16 +20,23 @@ const AuthContext = createContext<AuthContextProps>({});
     email: usuarioFirebase.email,
     token,
     provedor: usuarioFirebase.providerData[0].providerId,
-    imagemUrl: usuarioFirebase.photoUrl,
+    imagemUrl: usuarioFirebase.photoURL,
   };
-} */
+}
 
 export function AuthProvider(props) {
   const [usuario, setUsuario] = useState<Usuario>(null);
 
   async function loginGoogle() {
-    console.log("Login google");
-    route.push("/");
+    const resp = await firebase
+      .auth()
+      .signInWithPopup(new firebase.auth.GoogleAuthProvider());
+
+    if (resp.user?.email) {
+      const usuario = await usuarioNormalizado(resp.user);
+      setUsuario(usuario);
+      route.push("/");
+    }
   }
 
   return (
