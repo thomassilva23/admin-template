@@ -24,6 +24,7 @@ async function usuarioNormalizado(
     imagemUrl: usuarioFirebase.photoURL,
   };
 }
+<<<<<<< HEAD
 
 function gerenciarCookie(logado: Boolean) {
   if (logado) {
@@ -34,6 +35,8 @@ function gerenciarCookie(logado: Boolean) {
     Cookies.remove("admin-template-cod3r-auth");
   }
 }
+=======
+>>>>>>> 9fab956c48059c93c5b0cdc23c39fffec61a6fa9
 
 export function AuthProvider(props) {
   const [carregando, setCarregando] = useState(true);
