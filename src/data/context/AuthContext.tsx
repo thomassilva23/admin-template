@@ -6,7 +6,9 @@ import Usuario from "../../model/Usuario";
 
 interface AuthContextProps {
   usuario?: Usuario;
+  carregando?: boolean;
   loginGoogle?: () => Promise<void>;
+  logout?: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps>({});
@@ -24,7 +26,6 @@ async function usuarioNormalizado(
     imagemUrl: usuarioFirebase.photoURL,
   };
 }
-<<<<<<< HEAD
 
 function gerenciarCookie(logado: Boolean) {
   if (logado) {
@@ -35,8 +36,6 @@ function gerenciarCookie(logado: Boolean) {
     Cookies.remove("admin-template-cod3r-auth");
   }
 }
-=======
->>>>>>> 9fab956c48059c93c5b0cdc23c39fffec61a6fa9
 
 export function AuthProvider(props) {
   const [carregando, setCarregando] = useState(true);
@@ -58,21 +57,40 @@ export function AuthProvider(props) {
   }
 
   async function loginGoogle() {
-    const resp = await firebase
-      .auth()
-      .signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    try {
+      setCarregando(true);
+      const resp = await firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.GoogleAuthProvider());
 
-    configurarSessao(resp.user);
-    route.push("/");
+      configurarSessao(resp.user);
+      route.push("/");
+    } finally {
+      setCarregando(false);
+    }
+  }
+
+  async function logout() {
+    try {
+      setCarregando(true);
+      await firebase.auth().signOut();
+      await configurarSessao(null);
+    } finally {
+      setCarregando(false);
+    }
   }
 
   useEffect(() => {
-    const cancelar = firebase.auth().onIdTokenChanged(configurarSessao); // essa função vai dizer quando tiver alguma alteração no browser
-    return () => cancelar();
+    if (Cookies.get("admin-template-cod3r-auth")) {
+      const cancelar = firebase.auth().onIdTokenChanged(configurarSessao); // essa função vai dizer quando tiver alguma alteração no browser
+      return () => cancelar();
+    } else {
+      setCarregando(false);
+    }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ usuario, loginGoogle }}>
+    <AuthContext.Provider value={{ usuario, carregando, loginGoogle, logout }}>
       {props.children}
     </AuthContext.Provider>
   );
