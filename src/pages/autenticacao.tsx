@@ -1,10 +1,11 @@
+import Image from "next/image";
 import { useState } from "react";
 import AuthInput from "../components/auth/AuthInput";
 import useAuth from "../data/hook/useAuth";
 import { IconeAtencao } from "../icons";
 
 export default function Autenticacao() {
-  const { usuario, loginGoogle } = useAuth();
+  const { cadastrar, login, loginGoogle } = useAuth();
 
   const [erro, setErro] = useState(null);
   const [modo, setModo] = useState<"login" | "cadastro">("login");
@@ -16,13 +17,17 @@ export default function Autenticacao() {
     setTimeout(() => setErro(null), tempoEmSegundos * 1000);
   }
 
-  function submeter() {
-    if (modo === "login") {
-      console.log("login");
-      exibirErro("Ocorreu um erro no login!");
-    } else {
-      console.log("cadastrar");
-      exibirErro("Ocorreu um erro no cadastro!");
+  async function submeter() {
+    try {
+      if (modo === "login") {
+        await login(email, senha);
+      } else {
+        await cadastrar(email, senha);
+      }
+    } catch (e) {
+      exibirErro(
+        e?.message ?? "Erro desconhecido. Entre em contato com o suporte."
+      );
     }
   }
 
@@ -90,9 +95,9 @@ export default function Autenticacao() {
         <button
           onClick={loginGoogle}
           className={`
-      w-full bg-red-500 hover:bg-red-400
-      text-white rounded-lg px-4 py-3
-    `}
+            w-full bg-red-500 hover:bg-red-400
+            text-white rounded-lg px-4 py-3
+          `}
         >
           Entrar com Google
         </button>
