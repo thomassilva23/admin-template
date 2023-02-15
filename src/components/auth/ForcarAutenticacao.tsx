@@ -1,3 +1,4 @@
+import Head from "next/head";
 import Image from "next/image";
 import Router from "next/router";
 import loading from "../../../public/images/loading.gif";
@@ -7,7 +8,22 @@ export default function ForcarAutenticacao(props) {
   const { usuario, carregando } = useAuth();
 
   function renderizarConteudo() {
-    return <>{props.children}</>;
+    return (
+      <>
+        <Head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if(!document.cookie?.includes("admin-template-cod3r-auth")){
+                  window.location.href = "/autenticacao" 
+                }
+              `,
+            }}
+          ></script>
+        </Head>
+        {props.children}
+      </>
+    );
   }
 
   function renderizarCarregando() {
@@ -17,7 +33,7 @@ export default function ForcarAutenticacao(props) {
             flex justify-center items-center h-screen
             `}
       >
-        <Image src={loading} />
+        <Image src={loading} alt="Carregando" />
       </div>
     );
   }
